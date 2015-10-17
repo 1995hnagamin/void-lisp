@@ -3,28 +3,21 @@
 #ifndef __LISP_H_INCLUDED__
 #define __LISP_H_INCLUDED__
 
-enum ObjType {
-  INT, CONS, NIL
-};
+typedef void* LispObject;
 
-struct LispObject {
-  void* value;
-  ObjType type;
-  
-  LispObject();
-  LispObject(const LispObject &obj);
-  LispObject(LispObject* value, ObjType type);
+enum ObjType {
+  NIL = 0, INT, CONS
 };
 
 struct LispCons {
-  LispObject* car;
-  LispObject* cdr;
-  
-  LispCons();
-  LispCons(const LispCons &obj);
-  LispCons(LispObject* car, LispObject* cdr);
+  LispObject car;
+  LispObject cdr;
 };
 
 typedef std::tuple<LispObject, int> Result;
+
+ObjType typeof(LispObject obj);
+
+LispObject entity(LispObject obj);
 
 #endif
