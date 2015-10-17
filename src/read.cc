@@ -23,7 +23,6 @@ Result read(std::string prog, int p) {
       *num = (*num) * 10 + (prog[p] - '0');
       ++p;
     }
-    
     return Result(make_int(num), p);
   } else if (prog[p] == '(') {
     ++p;
@@ -65,7 +64,7 @@ std::string tostring(LispObject obj) {
 
 int main() {
   std::string prog;
-  while (std::cout << "> ", std::cin >> prog) {
+  while (std::cout << "> " << std::flush, getline(std::cin, prog)) {
     Result res = read(prog, 0);
     std::cout << tostring(lisp_object(res)) << std::endl;
     delete_object(lisp_object(res));
