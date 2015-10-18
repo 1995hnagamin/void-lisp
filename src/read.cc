@@ -65,6 +65,7 @@ std::string tostring(LispObject obj) {
 int main() {
   std::string prog;
   while (std::cout << "> " << std::flush, getline(std::cin, prog)) {
+    if (prog.empty()) { continue; }
     Result res = read(prog, 0);
     std::cout << tostring(lisp_object(res)) << std::endl;
     delete_object(lisp_object(res));
