@@ -16,7 +16,15 @@ bool isignorable(const char &c) {
 
 Result read(std::string prog, int p) {
   while (isignorable(prog[p])) { ++p; }
-  if (isdigit(prog[p])) {
+  if (prog[p] == '\'') {
+    ++p;
+    std::string name;
+    while (isalpha(prog[p]) || isdigit(prog[p])) {
+      name.push_back(prog[p]);
+      ++p;
+    }
+    return Result(make_symbol(name), p);
+  } else if (isdigit(prog[p])) {
     int* num = new int;
     *num = 0;
     while (isdigit(prog[p])) {
@@ -58,6 +66,8 @@ std::string tostring(LispObject obj) {
       return expr;
     case NIL:
       return "nil";
+    case SYMBOL:
+      return ((LispSymbol*)(entity(obj)))->name;
   }
   assert(false);
 }
