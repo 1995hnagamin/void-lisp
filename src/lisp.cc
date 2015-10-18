@@ -69,5 +69,6 @@ LispObject make_symbol(const std::string &name) {
   LispSymbol* sym = new LispSymbol;
   *sym = {name, NULL, NULL};
   uintptr_t obj = (uintptr_t)sym | SYMBOL;
+  GLOBAL_SYMTBL[name] = (LispObject)obj;
   return (LispObject)obj;
 }
