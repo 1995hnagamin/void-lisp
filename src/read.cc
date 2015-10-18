@@ -7,26 +7,6 @@
 #include"lisp.h"
 #include"lisp.cc"
 
-LispObject make_cons(const LispObject &first, const LispObject &last) {
-  LispObject *car = new LispObject, *cdr = new LispObject;
-  *car = first, *cdr = last;
-  LispCons* cons = new LispCons(car, cdr);
-  LispObject obj((LispObject*)cons, CONS);
-  return obj;
-}
-
-LispObject get_car(LispObject obj) {
-  if (obj.type != CONS) throw 1;
-  LispCons pair = *(LispCons*)(obj.value);
-  return *pair.car;
-}
-
-LispObject get_cdr(LispObject obj) {
-  if (obj.type != CONS) throw 1;
-  LispCons pair = *(LispCons*)(obj.value);
-  return *pair.cdr;
-}
-
 LispObject lisp_object(Result res) { return std::get<0>(res); }
 int reader_pt(Result res) { return std::get<1>(res); }
 
@@ -43,8 +23,7 @@ Result read(std::string prog, int p) {
       *num = (*num) * 10 + (prog[p] - '0');
       ++p;
     }
-    LispObject obj((LispObject*)num, INT);
-    return Result(obj, p);
+    return Result(make_int(num), p);
   } else if (prog[p] == '(') {
     ++p;
     std::vector<LispObject> objs;
@@ -54,7 +33,7 @@ Result read(std::string prog, int p) {
       p = reader_pt(res);
     }
     ++p;
-    LispObject val;
+    LispObject val = NULL;
     if (objs.empty()) { return Result(val, p); }
     std::reverse(objs.begin(), objs.end());
     for (LispObject obj: objs) { val = make_cons(obj, val); }
@@ -66,17 +45,15 @@ Result read(std::string prog, int p) {
 std::string tostring(LispObject obj) {
   int val;
   std::string expr;
-  switch (obj.type) {
+  switch (typeof(obj)) {
     case INT:
-      val = *(int*)obj.value;
+      val = *(int*)(entity(obj));
       return std::to_string(val);
     case CONS:
       expr = "(";
-      //expr += tostring(get_car(obj));
-      std::cout << std::hex << ((LispCons*)obj.value)->car << std::endl;
+      expr += tostring(get_car(obj));
       expr += " ";
-      //expr += tostring(get_cdr(obj));
-      std::cout << std::hex << ((LispCons*)obj.value)->cdr << std::endl;
+      expr += tostring(get_cdr(obj));
       expr += ")";
       return expr;
     case NIL:
@@ -87,7 +64,8 @@ std::string tostring(LispObject obj) {
 
 int main() {
   std::string prog;
-  while (std::cout << "> ", std::cin >> prog) {
+  while (std::cout << "> " << std::flush, getline(std::cin, prog)) {
+    if (prog.empty()) { continue; }
     Result res = read(prog, 0);
     std::cout << tostring(lisp_object(res)) << std::endl;
     delete_object(lisp_object(res));
