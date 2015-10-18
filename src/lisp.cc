@@ -1,5 +1,4 @@
 #include"lisp.h"
-#include<iostream>
 
 void delete_object(LispObject obj) {
   LispCons *pair;
@@ -7,7 +6,7 @@ void delete_object(LispObject obj) {
     case NIL:
       break;
     case INT:
-      delete entity(obj);
+      delete (int*)entity(obj);
       break;
     case CONS:
       pair = (LispCons*)(entity(obj)); 
