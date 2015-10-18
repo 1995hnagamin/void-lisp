@@ -15,9 +15,13 @@ struct LispCons {
 };
 
 typedef std::tuple<LispObject, int> Result;
-
 ObjType typeof(LispObject obj);
-
 LispObject entity(LispObject obj);
+void delete_object(LispObject obj);
 
+LispObject make_int(int* num);
+LispObject make_cons(LispObject left, LispObject right);
+
+LispObject get_car(LispObject obj);
+LispObject get_cdr(LispObject obj);
 #endif
